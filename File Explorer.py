@@ -2,10 +2,10 @@
 import os
 
 # Variables
-TEMP = os.environ.get('TEMP')
-SYSTEM_ROOT = os.environ.get('SYSTEMROOT')
-USER_PROFILE = os.environ.get('USERPROFILE')
-PROGRAM_FILES = os.environ.get('PROGRAMFILES')
+TEMP 		  = os.environ.get('TEMP')
+SYSTEM_ROOT 	  = os.environ.get('SYSTEMROOT')
+USER_PROFILE 	  = os.environ.get('USERPROFILE')
+PROGRAM_FILES 	  = os.environ.get('PROGRAMFILES')
 PROGRAM_FILES_X86 = os.environ.get('PROGRAMFILES(X86)')
 
 # Function
@@ -15,25 +15,26 @@ def tempCleaner(path):
 			os.remove(f'{path}\{file}')
 			os.rmdir(f'{path}\{file}')
 			print(f'Deleted: {path}\{file}')
-		except PermissionError:
-			print(f'[!] Cannot delete: {path}\{file}')
+		except PermissionError or FileNotFoundError:
+			print(f'\n[!] Cannot delete: {path}\{file}')
 			continue
 
 def showFiles(path, detailed = False):
 	if detailed or detailed == 'T' or detailed == 't':
 		for root, dirs, files in os.walk(path, topdown = True):
-			print(f'[+] Root: {root}\nDirectories: {dirs}\nFiles: {files}\n\n')
+			print(f'[+] Root: {root}\nDirectories: {dirs}\nFiles: {files}\n')
+		
 			
 	else:
 		for file in os.listdir(currentDir):
-			print(f'[+] {file}')
+			print(f'[+] {i}. {file}')
 
 while True:
 	currentDir = os.getcwd()
-	action = input(f'\nYou are in this directory: \'{currentDir}\'\n[!] Choose an action:\n[+] 1) Change directory.\n[+] 2) Show files in this directory.\n: ')
+	action = input(f'\nYou are in this directory: \'{currentDir}\'\n[!] Choose an action:\n[+] 1) Change directory.\n[+] 2) Show files in this directory.\n[+] 3) Clean \'TEMP\' folder\n: ')
 
 	if action == '1' or action == 'change':
-		print(f'\n[!] Some shortcuts:\n1) Windows (W, w) - \'{SYSTEM_ROOT}\'\n2) User Folder (UF, uf) - \'{USER_PROFILE}\'\n3) Program Files (PF, pf) - {PROGRAM_FILES}\n4) Program Files (x86) (PF86, pf86) - {PROGRAM_FILES_X86}\n')
+		print(f'\n[!] Some shortcuts:\n1) Windows (W, w) - \'{SYSTEM_ROOT}\'\n2) User Folder (UF, uf) - \'{USER_PROFILE}\'\n3) Program Files (PF, pf) - \'{PROGRAM_FILES}\'\n4) Program Files (x86) (PF86, pf86) - \'{PROGRAM_FILES_X86}\'\n')
 
 		changeDirectory = input('[?] Enter the new directory: ')
 		if changeDirectory == 'Windows' or changeDirectory == 'W' or changeDirectory == 'w':
@@ -51,5 +52,7 @@ while True:
 
 	elif action == '2' or action == 'show':
 		detailed = input('\n[!] Show details?\nTrue or False.\nDefault is \'FALSE\'.\n: ')
-
 		showFiles(currentDir, detailed)
+	
+	elif action == '3' or action == 'clean':
+		tempCleaner(TEMP)
