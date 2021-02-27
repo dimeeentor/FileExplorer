@@ -35,7 +35,7 @@ def help(module):
 		print(f'\nType the name of folder.\nFolder will be created in this directory: \'{currentDir}\'.')
 
 	else:
-		shortcuts = ['Change directory (change, cd)', 'Show files in this directory (show, ls)', 'Execute a specific file (run)', 'Clean \'TEMP\' folder (clean, cltmp)', 'Make a folder (mkdir)', 'Exit (exit)']
+		shortcuts = ['Change directory (change, cd)', 'Show files in this directory (show, ls)', 'Execute a specific file (run)', 'Clean \'TEMP\' folder (clean, cltmp)', 'Make a folder (mkdir)', 'Make a file (mkf)', 'Read File (rf)' 'Exit (exit)']
 		print('Help Shortcuts:')
 
 		for count, shortcut in enumerate(shortcuts):
@@ -107,7 +107,7 @@ def changeDirectory():
 				os.chdir(COMMON_PROGRAM_FILES_X86)
 
 			elif changeDirectory == 'File Directory' or changeDirectory == 'FD' or changeDirectory == 'fd':
-				os.chdir(CURRENT_DIRECTORY)
+				os.chdir(FILE_DIRECTORY)
 
 			elif changeDirectory == '-':
 				break
@@ -148,9 +148,8 @@ def runFile():
 			break
 
 		else:
-			if checkExtension(fileToOpen):
 				try:
-					os.startfile(f'{currentDir}\{fileToOpen}')
+					os.startfile(os.path.join(currentDir, fileToOpen))
 					break
 
 				except PermissionError:
@@ -161,12 +160,20 @@ def runFile():
 					print('\nThis file does not exist.\n')
 					continue
 
-			else:
-				print('You can \'EXECUTE\' only \'FILES\'.')
-
 def makeDirectory(folder, path):
 	os.mkdir(folder)
 	print(f'Folder: {folder} was successfully created.\nIn this directory: \'{path}\'.')
+
+def makeFile(file, path, extension):
+	file = open(os.path.join(path, f'{file}{extension}'), 'w')
+	message = input('\nEnter the text what you want to write: ')
+	file.write(message)
+	file.close()
+
+def readFile(path, file):
+	file = open(os.path.join(path, file), 'r')
+	print(f'\n-----------\n\n{file.read()}\n\n-----------')
+	file.close()
 
 while True:
 	currentDir = os.getcwd()
@@ -207,6 +214,23 @@ while True:
 			
 		else:
 			makeDirectory(folder, currentDir)
+
+	elif action == 'mkf':
+		file = input('Enter the name of file.\n: ').strip()
+		extension = input('Enter the extension.\nDefault is \'.txt\': ')
+
+		if file == '-' or extension == '-':
+			continue
+		else:
+			makeFile(file, currentDir, f'.txt' if extension == '' else f'{extension}')
+	
+	elif action == 'rf':
+		showFiles(currentDir)
+		file = input('Enter the name of file with extension: ')
+		if file == '-':
+			continue
+		else:
+			readFile(currentDir, file)
 
 	elif action == 'exit':
 		exit()
